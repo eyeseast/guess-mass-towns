@@ -1,68 +1,41 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, setContext } from "svelte";
 	import * as topojson from "topojson-client";
+
+	import { guesses } from "./stores.js";
+	import PlaceMap from "./components/PlaceMap.svelte";
 
 	export let name = "";
 	export let url = "";
 
 	// remove these exports later
-	export let topology;
-	export let guesses = new Map();
+	export let topology = null;
+	export let places = { features: [] };
 
-	$: towns = topology
-		? topojson.feature(topology, topology.objects.towns)
-		: { features: [] };
+	$: if (topology && name) {
+		places = topojson.feature(topology, name);
+	}
+
+	$: bbox = topology?.bbox;
+
+	$: unguessed = places.features.filter(f => !$guesses.has(f.properties.id));
 
 	onMount(async () => {
-		topology = await fetch(url).then((r) => r.json());
+		topology = await fetch(url).then(r => r.json());
 	});
-
-	export function getTowns() {
-		return towns;
-	}
-
-	export function guess(id, correct) {
-		guesses.set(id, correct);
-		guesses = guesses;
-	}
 </script>
 
 <style>
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-
-	li.correct {
-		color: green;
-	}
-
-	li.incorrect {
-		color: red;
+	:global(body) {
+		margin: 0;
+		padding: 0;
 	}
 </style>
 
 <svelte:options accessors />
 
 <main>
-	<h1>{name}</h1>
-	<ul class="towns">
-		{#each towns.features as town}
-			<li
-				class:correct={guesses.get(town.properties.id)}
-				class:incorrect={guesses.get(town.properties.id) === false}>
-				{town.properties.name}
-				<button on:click={(e) => guess(town.properties.id, true)}>Yes</button>
-				<button on:click={(e) => guess(town.properties.id, false)}>No</button>
-			</li>
-		{/each}
-	</ul>
+	{#if places && bbox}
+		<PlaceMap {places} {bbox} />
+	{/if}
 </main>
