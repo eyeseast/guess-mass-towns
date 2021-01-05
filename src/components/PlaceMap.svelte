@@ -23,7 +23,13 @@
 
 		map.on("load", onLoad);
 
+		map.addControl(new mapboxgl.NavigationControl());
+
 		window.map = map;
+
+		return () => {
+			map.remove();
+		};
 	});
 
 	function onLoad() {

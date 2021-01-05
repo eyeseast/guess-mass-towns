@@ -10,6 +10,7 @@
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-replace": "^2.3.4",
+    "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.0.1",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
