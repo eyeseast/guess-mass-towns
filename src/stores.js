@@ -27,6 +27,7 @@ function createQueue(places = []) {
 			let val;
 			update($places => {
 				val = $places.shift();
+				return $places;
 			});
 			return val;
 		},
@@ -35,6 +36,7 @@ function createQueue(places = []) {
 			let len;
 			update($places => {
 				len = $places.unshift(...items);
+				return $places;
 			});
 			return len;
 		},
@@ -43,6 +45,7 @@ function createQueue(places = []) {
 			let len;
 			update($places => {
 				len = $places.push(...items);
+				return $places;
 			});
 			return len;
 		},
@@ -51,6 +54,7 @@ function createQueue(places = []) {
 			let val;
 			update($places => {
 				val = $places.pop();
+				return $places;
 			});
 			return val;
 		},

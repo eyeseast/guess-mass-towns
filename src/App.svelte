@@ -12,21 +12,25 @@
 
 	export let current;
 	export let guess;
-	let topology;
-	let places;
+	export let topology;
+	export let places;
 	let started = false;
 
 	$: if (topology && name) {
 		places = topojson.feature(topology, name);
-		$queue = places.features;
 	}
 
+	$: if (places && places.features) {
+		$queue = places.features;
+	}
 	$: bbox = topology?.bbox;
 
-	$: console.log(current);
+	$: console.log($queue);
 
 	onMount(async () => {
 		topology = await fetch(url).then(r => r.json());
+
+		window.queue = queue;
 	});
 
 	export function start() {
@@ -41,6 +45,10 @@
 	export function next() {
 		guess = null;
 		current = queue.shift();
+	}
+
+	export function getQueue() {
+		return $queue;
 	}
 </script>
 
