@@ -8,7 +8,7 @@ function createGuessStore() {
 
 	return {
 		guess(id, correct) {
-			update(s => s.add(id, correct));
+			update(s => s.set(id, correct));
 		},
 
 		subscribe,
@@ -20,7 +20,9 @@ function createQueue(places = []) {
 
 	return {
 		subscribe,
-		set,
+		set($places) {
+			set(shuffle($places));
+		},
 		shift() {
 			let val;
 			update($places => {

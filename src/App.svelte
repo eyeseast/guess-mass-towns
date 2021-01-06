@@ -3,16 +3,18 @@
 	import * as topojson from "topojson-client";
 
 	import { guesses, queue } from "./stores.js";
+	import Guesses from "./components/Guesses.svelte";
 	import Intro from "./components/Intro.svelte";
 	import PlaceMap from "./components/PlaceMap.svelte";
 
 	export let name = "";
 	export let url = "";
 
+	export let current;
+	export let guess;
 	let topology;
 	let places;
 	let started = false;
-	let current;
 
 	$: if (topology && name) {
 		places = topojson.feature(topology, name);
@@ -21,12 +23,23 @@
 
 	$: bbox = topology?.bbox;
 
+	$: console.log(current);
+
 	onMount(async () => {
 		topology = await fetch(url).then(r => r.json());
 	});
 
 	export function start() {
 		started = true;
+		current = queue.shift();
+	}
+
+	export function check() {
+		return current.properties.id === guess.properties.id;
+	}
+
+	export function next() {
+		guess = null;
 		current = queue.shift();
 	}
 </script>
@@ -42,9 +55,11 @@
 
 <main>
 	{#if !started}
-		<Intro disabled={!places} on:click={start} />
+		<Intro disabled={!$queue} on:click={start} />
+	{:else}
+		<Guesses {places} {current} />
 	{/if}
 	{#if places && bbox}
-		<PlaceMap {places} {bbox} />
+		<PlaceMap {places} {bbox} on:click={e => (guess = e.detail)} />
 	{/if}
 </main>

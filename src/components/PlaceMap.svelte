@@ -1,6 +1,6 @@
 <script>
 	import mapboxgl from "mapbox-gl";
-	import { onMount, afterUpdate } from "svelte";
+	import { onMount, afterUpdate, createEventDispatcher } from "svelte";
 
 	mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
@@ -9,6 +9,8 @@
 
 	let container;
 	let map;
+
+	const dispatch = createEventDispatcher();
 
 	$: if (map && places.features.length) {
 		map.getSource("places")?.setData(places);
@@ -76,6 +78,8 @@
 		const [place] = e.features;
 
 		console.log(place?.properties?.name);
+
+		dispatch("click", place);
 	}
 </script>
 
