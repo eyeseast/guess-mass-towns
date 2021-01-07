@@ -1,16 +1,33 @@
 // share data and guesses across components
 import { shuffle } from "lodash-es";
 
-import { writable, derived } from "svelte/store";
+import { writable } from "svelte/store";
 
-function createGuessStore() {
-	const { update, subscribe } = writable(new Map());
+export function saveStore(
+	store,
+	key,
+	{ storage = sessionStorage, serialize = JSON.stringify, deserialize = JSON.parse }
+) {
+	if (!store || !key) return;
+
+	const saved = storage.getItem(key);
+	if (saved) {
+		store.set(deserialize(saved));
+	}
+
+	return store.subscribe($value => {
+		storage.setItem(key, serialize($value));
+	});
+}
+
+function createGuessStore(initial = new Map()) {
+	const { set, update, subscribe } = writable(initial);
 
 	return {
 		guess(id, correct) {
 			update(s => s.set(id, correct));
 		},
-
+		set,
 		subscribe,
 	};
 }
@@ -62,4 +79,4 @@ function createQueue(places = []) {
 }
 
 export const guesses = createGuessStore();
-export const queue = createQueue([]);
+export const queue = createQueue();

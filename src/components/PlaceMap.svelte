@@ -6,6 +6,8 @@
 
 	export let places = { features: [] };
 	export let bbox;
+	export let current;
+	export let guess;
 
 	let container;
 	let map;
@@ -35,7 +37,7 @@
 	});
 
 	function onLoad() {
-		map.addSource("places", { type: "geojson", data: places });
+		map.addSource("places", { type: "geojson", data: places, promoteId: "id" });
 
 		map.addLayer({
 			id: "places-lines",

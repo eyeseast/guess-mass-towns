@@ -2,7 +2,7 @@
 	import { onMount, setContext } from "svelte";
 	import * as topojson from "topojson-client";
 
-	import { guesses, queue } from "./stores.js";
+	import { guesses, queue, saveStore } from "./stores.js";
 	import Guesses from "./components/Guesses.svelte";
 	import Intro from "./components/Intro.svelte";
 	import PlaceMap from "./components/PlaceMap.svelte";
@@ -25,12 +25,17 @@
 	}
 	$: bbox = topology?.bbox;
 
-	$: console.log($queue);
-
 	onMount(async () => {
+		saveStore(guesses, "$guesses", {
+			serialize: g => JSON.stringify([...g]),
+			deserialize: g => new Map(JSON.parse(g || "null")),
+		});
+
 		topology = await fetch(url).then(r => r.json());
 
 		window.queue = queue;
+
+		return () => {};
 	});
 
 	export function start() {
@@ -39,7 +44,7 @@
 	}
 
 	export function check() {
-		return current.properties.id === guess.properties.id;
+		guesses.guess(current.properties.id, current.properties.id === guess.properties.id);
 	}
 
 	export function next() {
@@ -68,6 +73,6 @@
 		<Guesses {places} {current} />
 	{/if}
 	{#if places && bbox}
-		<PlaceMap {places} {bbox} on:click={e => (guess = e.detail)} />
+		<PlaceMap {places} {bbox} {current} {guess} on:click={e => (guess = e.detail)} />
 	{/if}
 </main>
