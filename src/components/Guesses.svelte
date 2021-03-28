@@ -34,7 +34,12 @@
 		{#if opened}Close{:else}Open{/if}
 	</button>
 	{#if current}
-		<div class="current">Find {current.properties.name}</div>
+		<div class="current">
+			<p>
+				Find {current.properties.name}
+				<button>Show me</button>
+			</p>
+		</div>
 	{/if}
 
 	<div class="guesses">

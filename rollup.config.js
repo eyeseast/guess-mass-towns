@@ -60,6 +60,7 @@ export default {
 		commonjs(),
 
 		replace({
+			preventAssignment: true,
 			"process.env.MAPBOX_ACCESS_TOKEN": JSON.stringify(
 				process.env.MAPBOX_ACCESS_TOKEN
 			),

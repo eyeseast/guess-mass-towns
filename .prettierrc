@@ -6,5 +6,6 @@
 	"quoteProps": "as-needed",
 	"singleQuote": false,
 	"trailingComma": "es5",
-	"useTabs": true
+	"useTabs": true,
+	"svelteSortOrder": "scripts-styles-markup"
 }

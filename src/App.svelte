@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script>
 	import { onMount, setContext } from "svelte";
 	import * as topojson from "topojson-client";
@@ -14,6 +16,7 @@
 	export let guess;
 	export let topology;
 	export let places;
+
 	let started = false;
 
 	$: if (topology && name) {
@@ -63,8 +66,6 @@
 		padding: 0;
 	}
 </style>
-
-<svelte:options accessors />
 
 <main>
 	{#if !started}
