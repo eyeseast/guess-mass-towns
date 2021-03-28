@@ -1,15 +1,20 @@
 <script>
-	import { guesses } from "../stores.js";
+	import { getContext } from "svelte";
+	import { guesses, current } from "../stores.js";
 
-	export let current;
+	const { getMap } = getContext("guess-mass-towns");
+
 	export let places = { features: [] };
 
 	let opened;
+	let map = getMap();
 
 	$: index = places.features.reduce((m, f) => {
 		m.set(f.id, f.properties.name);
 		return m;
 	}, new Map());
+
+	$: console.log(map);
 </script>
 
 <style>
@@ -33,11 +38,11 @@
 	<button on:click={e => (opened = !opened)}>
 		{#if opened}Close{:else}Open{/if}
 	</button>
-	{#if current}
+	{#if $current}
 		<div class="current">
 			<p>
-				Find {current.properties.name}
-				<button>Show me</button>
+				Find {$current.properties.name}
+				<button on:click={map.show}>Show me</button>
 			</p>
 		</div>
 	{/if}

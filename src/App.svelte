@@ -4,7 +4,7 @@
 	import { onMount, setContext } from "svelte";
 	import * as topojson from "topojson-client";
 
-	import { guesses, queue, saveStore } from "./stores.js";
+	import { current, guess, guesses, queue, saveStore } from "./stores.js";
 	import Guesses from "./components/Guesses.svelte";
 	import Intro from "./components/Intro.svelte";
 	import PlaceMap from "./components/PlaceMap.svelte";
@@ -12,10 +12,9 @@
 	export let name = "";
 	export let url = "";
 
-	export let current;
-	export let guess;
-	export let topology;
-	export let places;
+	export let topology = null;
+	export let places = null;
+	export let map = null;
 
 	let started = false;
 
@@ -27,6 +26,10 @@
 		$queue = places.features;
 	}
 	$: bbox = topology?.bbox;
+
+	setContext("guess-mass-towns", {
+		getMap: () => map,
+	});
 
 	onMount(async () => {
 		saveStore(guesses, "$guesses", {
@@ -43,20 +46,28 @@
 
 	export function start() {
 		started = true;
-		current = queue.shift();
+		$current = queue.shift();
 	}
 
 	export function check() {
-		guesses.guess(current.id, current.id === guess.id);
+		guesses.guess($current.id, $current.id === $guess.id);
 	}
 
 	export function next() {
-		guess = null;
-		current = queue.shift();
+		$guess = null;
+		$current = queue.shift();
 	}
 
 	export function getQueue() {
 		return $queue;
+	}
+
+	export function getGuess() {
+		return $guess;
+	}
+
+	export function getCurrent() {
+		return $current;
 	}
 </script>
 
@@ -74,6 +85,6 @@
 		<Guesses {places} {current} />
 	{/if}
 	{#if places && bbox}
-		<PlaceMap {places} {bbox} {current} {guess} on:click={e => (guess = e.detail)} />
+		<PlaceMap {places} {bbox} bind:this={map} />
 	{/if}
 </main>

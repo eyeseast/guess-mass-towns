@@ -1,13 +1,12 @@
 <script>
 	import mapboxgl from "mapbox-gl";
 	import { onMount, afterUpdate, createEventDispatcher } from "svelte";
+	import { current, guess } from "../stores.js";
 
 	mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
 	export let places = { features: [] };
 	export let bbox;
-	export let current;
-	export let guess;
 
 	let container;
 	let map;
@@ -36,6 +35,17 @@
 			map.remove();
 		};
 	});
+
+	export function show() {
+		if (!$current) return;
+		const { coordinates } = $current.geometry;
+		const bbox = coordinates[0].reduce(
+			(bounds, coord) => bounds.extend(coord),
+			new mapboxgl.LngLatBounds()
+		);
+
+		map.fitBounds(bbox, { padding: 300 });
+	}
 
 	function onLoad() {
 		map.addSource("places", { type: "geojson", data: places });
@@ -100,6 +110,7 @@
 
 		console.log(place?.properties?.name);
 
+		$guess = place;
 		dispatch("click", place);
 	}
 </script>

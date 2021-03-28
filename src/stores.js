@@ -78,5 +78,7 @@ function createQueue(places = []) {
 	};
 }
 
+export const current = writable();
+export const guess = writable();
 export const guesses = createGuessStore();
 export const queue = createQueue();
