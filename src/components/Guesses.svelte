@@ -7,7 +7,7 @@
 	let opened;
 
 	$: index = places.features.reduce((m, f) => {
-		m.set(f.properties.id, f.properties.name);
+		m.set(f.id, f.properties.name);
 		return m;
 	}, new Map());
 </script>

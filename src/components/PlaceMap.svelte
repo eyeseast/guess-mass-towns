@@ -11,6 +11,7 @@
 
 	let container;
 	let map;
+	let hoveredStateId = null;
 
 	const dispatch = createEventDispatcher();
 
@@ -37,7 +38,7 @@
 	});
 
 	function onLoad() {
-		map.addSource("places", { type: "geojson", data: places, promoteId: "id" });
+		map.addSource("places", { type: "geojson", data: places });
 
 		map.addLayer({
 			id: "places-lines",
@@ -59,18 +60,36 @@
 			source: "places",
 			paint: {
 				"fill-color": "blue",
-				"fill-opacity": 0,
+				"fill-opacity": [
+					"case",
+					["boolean", ["feature-state", "hover"], false],
+					0.8,
+					0.5,
+				],
 			},
 		});
 
-		// Change the cursor to a pointer when the mouse is over the states layer.
-		map.on("mouseenter", "places-fill", () => {
+		// Change the cursor to a pointer when the mouse is over the places-fill layer.
+		map.on("mousemove", "places-fill", e => {
 			map.getCanvas().style.cursor = "pointer";
+
+			const [place] = e.features;
+
+			if (hoveredStateId !== null) {
+				map.setFeatureState({ source: "places", id: hoveredStateId }, { hover: false });
+			}
+			hoveredStateId = place.id;
+			map.setFeatureState({ source: "places", id: place.id }, { hover: true });
 		});
 
 		// Change it back to a pointer when it leaves.
-		map.on("mouseleave", "places-fill", () => {
+		map.on("mouseleave", "places-fill", e => {
 			map.getCanvas().style.cursor = "";
+
+			if (hoveredStateId !== null) {
+				map.setFeatureState({ source: "places", id: hoveredStateId }, { hover: false });
+			}
+			hoveredStateId = null;
 		});
 
 		map.on("click", "places-fill", onClick);

@@ -47,7 +47,7 @@
 	}
 
 	export function check() {
-		guesses.guess(current.properties.id, current.properties.id === guess.properties.id);
+		guesses.guess(current.id, current.id === guess.id);
 	}
 
 	export function next() {
