@@ -23,6 +23,7 @@
 			container,
 			style: "mapbox://styles/mapbox/streets-v11",
 			bounds: bbox,
+			maxZoom: 12,
 		});
 
 		map.on("load", onLoad);
@@ -73,8 +74,8 @@
 				"fill-opacity": [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					0.8,
-					0.5,
+					0.6,
+					0.3,
 				],
 			},
 		});

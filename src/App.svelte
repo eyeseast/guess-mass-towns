@@ -9,12 +9,12 @@
 	import Intro from "./components/Intro.svelte";
 	import PlaceMap from "./components/PlaceMap.svelte";
 
+	export const ui = {};
 	export let name = "";
 	export let url = "";
 
 	export let topology = null;
 	export let places = null;
-	export let map = null;
 
 	let started = false;
 
@@ -28,7 +28,7 @@
 	$: bbox = topology?.bbox;
 
 	setContext("guess-mass-towns", {
-		getMap: () => map,
+		getMap: () => ui.map,
 	});
 
 	onMount(async () => {
@@ -66,6 +66,10 @@
 		return $guess;
 	}
 
+	export function getGuesses() {
+		return $guesses;
+	}
+
 	export function getCurrent() {
 		return $current;
 	}
@@ -80,11 +84,11 @@
 
 <main>
 	{#if !started}
-		<Intro disabled={!$queue} on:click={start} />
+		<Intro bind:this={ui.intro} disabled={!$queue} on:click={start} />
 	{:else}
-		<Guesses {places} {current} />
+		<Guesses bind:this={ui.guesses} {places} />
 	{/if}
 	{#if places && bbox}
-		<PlaceMap {places} {bbox} bind:this={map} />
+		<PlaceMap bind:this={ui.map} {places} {bbox} />
 	{/if}
 </main>

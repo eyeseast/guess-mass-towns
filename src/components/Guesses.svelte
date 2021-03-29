@@ -5,6 +5,7 @@
 	const { getMap } = getContext("guess-mass-towns");
 
 	export let places = { features: [] };
+	export let index = new Map();
 
 	let opened;
 	let map = getMap();
@@ -50,7 +51,7 @@
 	<div class="guesses">
 		<ul>
 			{#each [...$guesses] as [id, correct] (id)}
-				<li>{index[id]}: {correct}</li>
+				<li>{index.get(id)}: {correct}</li>
 			{/each}
 		</ul>
 	</div>
